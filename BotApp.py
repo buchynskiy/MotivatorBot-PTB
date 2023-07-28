@@ -38,6 +38,33 @@ def echo(update: Update, context: CallbackContext) -> None:
     default_message = 'I am just a bot. Sometimes there are things I don\'t understand \U0001F916'
     update.message.reply_text(default_message, reply_to_message_id=update._effective_message.message_id)
 
+def button(update: Update, context: CallbackContext) -> None:
+    update.callback_query.answer()
+    update.callback_query.message.edit_reply_markup(
+    reply_markup=InlineKeyboardMarkup([])
+    )
+    if update.callback_query.data == 'similar':
+        context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+        sleep(1)
+        update.callback_query.message.reply_photo(photo=open('images/botwant.jpg', 'rb'))
+        update.callback_query.message.reply_text("Bot just wants you to keep your focus on certain things and not loose hope \U0001F607")
+
+    elif update.callback_query.data == 'lang':
+        context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+        sleep(1)
+        update.callback_query.message.reply_photo(photo=open('images/sadbot.jpg', 'rb'))
+        update.callback_query.message.reply_text("Unfortunately, the only supported language is English.")
+
+    elif update.callback_query.data == 'amount':
+        context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+        sleep(1)
+        update.callback_query.message.reply_text(f'For now, the library of quotes consists of over {len(quotes)} motivational quotes.')
+    
+    elif update.callback_query.data == 'owner':
+        context.bot.send_chat_action(chat_id=update.effective_chat.id, action=ChatAction.TYPING)
+        sleep(1)
+        update.callback_query.message.reply_text('Here\'s a username of a developer of this bot: @petroszybkosc')
+
 def main() -> None:
 
     updater = Updater(TOKEN, use_context=True)
@@ -47,6 +74,7 @@ def main() -> None:
     dp.add_handler(CommandHandler('start', start))
     dp.add_handler(CommandHandler('info', info))
     dp.add_handler(CommandHandler('enough', enough))
+    dp.add_handler(CallbackQueryHandler(button))
 
     updater.start_polling()
     updater.idle()
